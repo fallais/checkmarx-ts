@@ -1,5 +1,13 @@
 import type { CxResponse } from './response.js';
-import { ACCEPTED, BAD_REQUEST, CREATED, FORBIDDEN, NOT_FOUND, NO_CONTENT, OK } from './httpStatus.js';
+import {
+  ACCEPTED,
+  BAD_REQUEST,
+  CREATED,
+  FORBIDDEN,
+  NOT_FOUND,
+  NO_CONTENT,
+  OK,
+} from './httpStatus.js';
 
 /**
  * Base error for every failure surfaced by the SDK.

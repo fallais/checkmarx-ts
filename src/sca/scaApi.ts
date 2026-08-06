@@ -275,7 +275,11 @@ export class ScaApi {
 
   async uploadZipContentForScanning(uploadLink: string, zipFilePath: string): Promise<boolean> {
     const content = await readFile(zipFilePath);
-    const response = await this.apiClient.callApi({ method: 'PUT', url: uploadLink, data: content });
+    const response = await this.apiClient.callApi({
+      method: 'PUT',
+      url: uploadLink,
+      data: content,
+    });
     return response.statusCode === OK;
   }
 
@@ -297,7 +301,11 @@ export class ScaApi {
 
   async uploadZipFile(uploadLink: string, zipFilePath: string): Promise<boolean> {
     const content = await readFile(zipFilePath);
-    const response = await this.apiClient.callApi({ method: 'PUT', url: uploadLink, data: content });
+    const response = await this.apiClient.callApi({
+      method: 'PUT',
+      url: uploadLink,
+      data: content,
+    });
     return response.statusCode === OK;
   }
 
@@ -777,7 +785,9 @@ export class ScaApi {
   }
 
   getNumberOfOutdatedPackagesByScanId(scanId: string) {
-    return this.query<{ packagesRows: ScaTotalCount }>(gql.numberOfOutdatedPackagesByScanId(scanId));
+    return this.query<{ packagesRows: ScaTotalCount }>(
+      gql.numberOfOutdatedPackagesByScanId(scanId),
+    );
   }
 
   getNumberOfLegalRisksByScanId(scanId: string) {
@@ -904,12 +914,7 @@ export class ScaApi {
     );
   }
 
-  getContainerPackagesByScanId(
-    scanId: string,
-    fetchRuntimeData = false,
-    take = 10,
-    skip = 0,
-  ) {
+  getContainerPackagesByScanId(scanId: string, fetchRuntimeData = false, take = 10, skip = 0) {
     return this.query<{ containerPackages: ScaTotalCount & { items: Record<string, unknown>[] } }>(
       gql.containerPackagesByScanId(scanId, fetchRuntimeData, take, skip),
     );

@@ -66,7 +66,8 @@ export class AccessControl {
   constructor(apiClient: ApiClient, acUrl?: string) {
     this.apiClient = apiClient;
     this.acUrl =
-      acUrl ?? `${(apiClient.configuration.serverBaseUrl ?? '').replace(/\/+$/, '')}/cxrestapi/auth`;
+      acUrl ??
+      `${(apiClient.configuration.serverBaseUrl ?? '').replace(/\/+$/, '')}/cxrestapi/auth`;
   }
 
   async getAllAssignableUsers(): Promise<User[]> {
@@ -153,7 +154,9 @@ export class AccessControl {
     const response = await this.apiClient.callApi({
       method: 'GET',
       url: `${this.acUrl}/LDAPServers/${ldapServerId}/UserEntries`,
-      params: usernameContainsPattern ? { userNameContainsPattern: usernameContainsPattern } : undefined,
+      params: usernameContainsPattern
+        ? { userNameContainsPattern: usernameContainsPattern }
+        : undefined,
     });
     return response.statusCode === OK ? response.json<User[]>() : [];
   }
@@ -245,7 +248,10 @@ export class AccessControl {
   }
 
   async getMyProfile(): Promise<MyProfile | undefined> {
-    const response = await this.apiClient.callApi({ method: 'GET', url: `${this.acUrl}/MyProfile` });
+    const response = await this.apiClient.callApi({
+      method: 'GET',
+      url: `${this.acUrl}/MyProfile`,
+    });
     return response.statusCode === OK ? response.json<MyProfile>() : undefined;
   }
 
@@ -425,9 +431,7 @@ export class AccessControl {
     return response.statusCode === NO_CONTENT;
   }
 
-  async getDetailsOfSamlRoleMappings(
-    samlIdentityProviderId?: number,
-  ): Promise<SAMLRoleMapping[]> {
+  async getDetailsOfSamlRoleMappings(samlIdentityProviderId?: number): Promise<SAMLRoleMapping[]> {
     const response = await this.apiClient.callApi({
       method: 'GET',
       url: `${this.acUrl}/SamlRoleMappings`,
@@ -483,9 +487,7 @@ export class AccessControl {
     return response.statusCode === NO_CONTENT;
   }
 
-  async getDetailsOfSamlTeamMappings(
-    samlIdentityProviderId?: number,
-  ): Promise<SAMLTeamMapping[]> {
+  async getDetailsOfSamlTeamMappings(samlIdentityProviderId?: number): Promise<SAMLTeamMapping[]> {
     const response = await this.apiClient.callApi({
       method: 'GET',
       url: `${this.acUrl}/SamlTeamMappings`,
@@ -552,10 +554,7 @@ export class AccessControl {
     return response.statusCode === OK ? response.json<SMTPSetting>() : undefined;
   }
 
-  async updateSmtpSettings(
-    smtpSettingsId: number,
-    request: SMTPSettingRequest,
-  ): Promise<boolean> {
+  async updateSmtpSettings(smtpSettingsId: number, request: SMTPSettingRequest): Promise<boolean> {
     const response = await this.apiClient.callApi({
       method: 'PUT',
       url: `${this.acUrl}/SMTPSettings/${smtpSettingsId}`,
@@ -836,15 +835,15 @@ export class AccessControl {
     const response = await this.apiClient.callApi({
       method: 'GET',
       url: `${this.acUrl}/WindowsDomains/${windowsDomainId}/UserEntries`,
-      params: usernameContainsPattern ? { userNameContainsPattern: usernameContainsPattern } : undefined,
+      params: usernameContainsPattern
+        ? { userNameContainsPattern: usernameContainsPattern }
+        : undefined,
     });
     return response.statusCode === OK ? response.json<User[]>() : [];
   }
 }
 
-function toFormFields(
-  request: object,
-): Record<string, string | number | boolean | undefined> {
+function toFormFields(request: object): Record<string, string | number | boolean | undefined> {
   const fields: Record<string, string | number | boolean | undefined> = {};
   for (const [key, value] of Object.entries(request)) {
     if (value === undefined || value === null) continue;

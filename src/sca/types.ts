@@ -1,12 +1,7 @@
 export type ScaReportFormat = 'Json' | 'Xml' | 'Pdf' | 'Csv' | 'CycloneDxJson' | 'CycloneDxXml';
 
 export type ScaReportDataType =
-  | 'All'
-  | 'Packages'
-  | 'Vulnerabilities'
-  | 'Licenses'
-  | 'Policies'
-  | 'SupplyChainRisks';
+  'All' | 'Packages' | 'Vulnerabilities' | 'Licenses' | 'Policies' | 'SupplyChainRisks';
 
 export type ScaSbomFileFormat = 'CycloneDxJson' | 'CycloneDxXml' | 'SpdxJson';
 

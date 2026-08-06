@@ -146,8 +146,7 @@ export function checkResponse(response: CxResponse): void {
 
   const invalid =
     (['GET', 'HEAD'].includes(method) && ![OK, UNAUTHORIZED].includes(status)) ||
-    (method === 'POST' &&
-      ![OK, NO_CONTENT, CREATED, UNAUTHORIZED, ACCEPTED].includes(status)) ||
+    (method === 'POST' && ![OK, NO_CONTENT, CREATED, UNAUTHORIZED, ACCEPTED].includes(status)) ||
     (['PUT', 'PATCH', 'DELETE'].includes(method) &&
       ![OK, NO_CONTENT, ACCEPTED, UNAUTHORIZED].includes(status));
 
@@ -180,7 +179,8 @@ export class ApiClient {
     this.tokenManager = new TokenManager(() => this.refreshToken());
 
     const capacity = configuration.rateLimitCapacity;
-    const refillRate = configuration.rateLimitRefillRate ?? capacity / configuration.rateLimitPeriod;
+    const refillRate =
+      configuration.rateLimitRefillRate ?? capacity / configuration.rateLimitPeriod;
     this.rateLimiter = new RateLimiter(capacity, refillRate, this.logger);
   }
 
@@ -207,7 +207,10 @@ export class ApiClient {
     }
     const payload = JSON.parse(text) as { access_token?: string };
     if (!payload.access_token) {
-      throw new CxError('Access token missing from the identity provider response', response.status);
+      throw new CxError(
+        'Access token missing from the identity provider response',
+        response.status,
+      );
     }
     return payload.access_token;
   }
