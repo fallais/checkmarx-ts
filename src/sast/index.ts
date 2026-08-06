@@ -1,6 +1,12 @@
 export { AccessControlApi } from './accessControlApi.js';
 export { SastApiBase } from './baseApi.js';
-export { constructConfiguration, getHeaders } from './config.js';
+export {
+  DEFAULT_CLIENT_SECRET,
+  getHeaders,
+  sastConfiguration,
+  sastConfigurationFromEnv,
+} from './config.js';
+export type { SastApiInit, SastConfigInput } from './config.js';
 export { ConfigurationApi } from './configurationApi.js';
 export type { CxSASTConfig } from './configurationApi.js';
 export { CustomFieldsApi } from './customFieldsApi.js';

@@ -155,7 +155,23 @@ export function checkResponse(response: CxResponse): void {
   }
 }
 
+const API_CLIENT_BRAND = Symbol.for('checkmarx-ts.ApiClient');
+
+/**
+ * Structural check rather than `instanceof`: the entry points are bundled
+ * separately, so a client built from `checkmarx-ts` is not the same class object
+ * as the one bundled into `checkmarx-ts/sast`.
+ */
+export function isApiClient(value: unknown): value is ApiClient {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value as Record<PropertyKey, unknown>)[API_CLIENT_BRAND] === true
+  );
+}
+
 export class ApiClient {
+  readonly [API_CLIENT_BRAND] = true;
   readonly configuration: Configuration;
   readonly urlPrefix: string;
   readonly logger: Logger;

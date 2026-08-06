@@ -1,7 +1,7 @@
 {
   "name": "checkmarx-ts",
-  "version": "0.1.0",
-  "description": "TypeScript SDK for the Checkmarx SAST and SCA REST APIs — a faithful port of CheckmarxPythonSDK",
+  "version": "0.2.0",
+  "description": "TypeScript SDK for the Checkmarx SAST and SCA REST APIs",
   "keywords": [
     "checkmarx",
     "cxsast",

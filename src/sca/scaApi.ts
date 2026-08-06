@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { basename } from 'node:path';
-import { ApiClient } from '../core/apiClient.js';
-import type { Configuration } from '../core/configuration.js';
+import { ApiClient, isApiClient } from '../core/apiClient.js';
 import { ACCEPTED, CREATED, NO_CONTENT, OK } from '../core/httpStatus.js';
-import { constructConfiguration } from './config.js';
+import type { ScaApiInit } from './config.js';
+import { scaConfiguration } from './config.js';
 import * as gql from './graphqlQueries.js';
 import type {
   GraphQLResponse,
@@ -57,8 +57,8 @@ export class ScaApi {
   readonly baseUrl: string;
   readonly gqlUrl: string;
 
-  constructor(apiClient?: ApiClient, configuration?: Partial<Configuration>) {
-    this.apiClient = apiClient ?? new ApiClient(constructConfiguration(configuration));
+  constructor(init: ScaApiInit) {
+    this.apiClient = isApiClient(init) ? init : new ApiClient(scaConfiguration(init));
     this.baseUrl = (this.apiClient.configuration.serverBaseUrl ?? '').replace(/\/+$/, '');
     this.gqlUrl = `${this.baseUrl}/graphql/graphql`;
   }

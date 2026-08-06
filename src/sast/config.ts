@@ -1,55 +1,96 @@
+import type { ApiClient } from '../core/apiClient.js';
 import type { Configuration } from '../core/configuration.js';
 import { createConfiguration } from '../core/configuration.js';
-import { asBoolean, asNumber, asString, getConfig } from '../core/configUtility.js';
+import { envNumber, envString, envVerify, requireEnv } from '../core/env.js';
+import type { Logger, LoggingLevel } from '../core/logger.js';
 import { parseLoggingLevel } from '../core/logger.js';
 import { VERSION } from '../core/version.js';
 
-const CONFIG_DEFAULT = {
-  base_url: undefined,
-  username: undefined,
-  password: undefined,
-  grant_type: 'password',
-  scope: 'sast_rest_api access_control_api',
-  client_id: 'resource_owner_client',
-  client_secret: '014DF517-39D1-4453-B7B3-9930C563627C',
-  scan_preset: 'Checkmarx Default',
-  configuration: 'Default Configuration',
-  team_full_name: '/CxServer',
-  max_try: 2,
-  report_folder: undefined,
-  timeout: 59,
-  verify: true,
-  cert: undefined,
-  proxy: undefined,
-  logging_level: 'ERROR',
-};
+/** Ships with CxSAST and is the same on every installation. */
+export const DEFAULT_CLIENT_SECRET = '014DF517-39D1-4453-B7B3-9930C563627C';
+
+export interface SastConfigInput {
+  /** Base URL of the CxSAST server, e.g. `https://sast.example.com`. */
+  baseUrl: string;
+  username?: string;
+  password?: string;
+  /** Defaults to `password`. */
+  grantType?: string;
+  /** Defaults to `sast_rest_api access_control_api`. */
+  scope?: string;
+  /** Defaults to `resource_owner_client`. */
+  clientId?: string;
+  /** Defaults to the stock CxSAST secret. */
+  clientSecret?: string;
+  /** Seconds. Defaults to 59. */
+  timeout?: number;
+  /** `true` verifies against the system CAs, `false` disables, a string is a CA path. */
+  verify?: boolean | string;
+  cert?: string;
+  key?: string;
+  proxy?: string;
+  loggingLevel?: LoggingLevel;
+  logger?: Logger;
+  maxRetries?: number;
+  rateLimitCapacity?: number;
+  rateLimitPeriod?: number;
+  rateLimitRefillRate?: number;
+}
 
 /**
- * Resolves `[CxSAST]` from the config file, `cxsast_*` env vars, and CLI flags.
- * The legacy `[checkmarx]` section is used when `[CxSAST]` has no `base_url`.
+ * Pass an `ApiClient` to share one token, connection pool and rate limiter
+ * across several API classes, or a `SastConfigInput` to build a private one.
  */
-export function constructConfiguration(overrides: Partial<Configuration> = {}): Configuration {
-  const oldConfig = getConfig(CONFIG_DEFAULT, 'checkmarx', 'cxsast_');
-  const newConfig = getConfig(CONFIG_DEFAULT, 'CxSAST', 'cxsast_');
-  const config = newConfig['base_url'] ? newConfig : oldConfig;
+export type SastApiInit = ApiClient | SastConfigInput;
 
-  const baseUrl = (asString(config['base_url']) ?? '').replace(/\/+$/, '');
+export function sastConfiguration(input: SastConfigInput): Configuration {
+  if (!input.baseUrl) {
+    throw new TypeError('baseUrl is required to build a CxSAST configuration');
+  }
+  const baseUrl = input.baseUrl.replace(/\/+$/, '');
 
   return createConfiguration({
     serverBaseUrl: baseUrl,
     tokenUrl: `${baseUrl}/cxrestapi/auth/identity/connect/token`,
-    username: asString(config['username']),
-    password: asString(config['password']),
-    grantType: asString(config['grant_type']),
-    scope: asString(config['scope']),
-    clientId: asString(config['client_id']),
-    clientSecret: asString(config['client_secret']),
-    timeout: asNumber(config['timeout'], 59),
-    verify: asBoolean(config['verify'], true),
-    cert: asString(config['cert']),
-    proxy: asString(config['proxy']),
-    loggingLevel: parseLoggingLevel(asString(config['logging_level'])),
-    ...overrides,
+    username: input.username,
+    password: input.password,
+    grantType: input.grantType ?? 'password',
+    scope: input.scope ?? 'sast_rest_api access_control_api',
+    clientId: input.clientId ?? 'resource_owner_client',
+    clientSecret: input.clientSecret ?? DEFAULT_CLIENT_SECRET,
+    timeout: input.timeout ?? 59,
+    verify: input.verify ?? true,
+    cert: input.cert,
+    key: input.key,
+    proxy: input.proxy,
+    loggingLevel: input.loggingLevel ?? 'ERROR',
+    logger: input.logger,
+    maxRetries: input.maxRetries ?? 3,
+    rateLimitCapacity: input.rateLimitCapacity ?? 20000,
+    rateLimitPeriod: input.rateLimitPeriod ?? 300,
+    rateLimitRefillRate: input.rateLimitRefillRate,
+  });
+}
+
+/**
+ * Opt-in helper reading `CXSAST_*` variables. Throws when `CXSAST_BASE_URL` is
+ * unset rather than falling back to a guess.
+ */
+export function sastConfigurationFromEnv(env: NodeJS.ProcessEnv = process.env): Configuration {
+  return sastConfiguration({
+    baseUrl: requireEnv(env, 'CXSAST_BASE_URL'),
+    username: envString(env, 'CXSAST_USERNAME'),
+    password: envString(env, 'CXSAST_PASSWORD'),
+    grantType: envString(env, 'CXSAST_GRANT_TYPE'),
+    scope: envString(env, 'CXSAST_SCOPE'),
+    clientId: envString(env, 'CXSAST_CLIENT_ID'),
+    clientSecret: envString(env, 'CXSAST_CLIENT_SECRET'),
+    timeout: envNumber(env, 'CXSAST_TIMEOUT', 59),
+    verify: envVerify(env, 'CXSAST_VERIFY', true),
+    cert: envString(env, 'CXSAST_CERT'),
+    key: envString(env, 'CXSAST_KEY'),
+    proxy: envString(env, 'CXSAST_PROXY'),
+    loggingLevel: parseLoggingLevel(envString(env, 'CXSAST_LOGGING_LEVEL')),
   });
 }
 

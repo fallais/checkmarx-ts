@@ -8,8 +8,7 @@ export {
 export type { CallApiOptions, FilePart, QueryParams, QueryValue } from './apiClient.js';
 export { CONFIGURATION_DEFAULTS, createConfiguration } from './configuration.js';
 export type { Configuration } from './configuration.js';
-export { asBoolean, asNumber, asString, getConfig, getConfigPath } from './configUtility.js';
-export type { ConfigRecord, ConfigValue } from './configUtility.js';
+export { envNumber, envString, envVerify, requireEnv } from './env.js';
 export { BadRequestError, CxError, NotFoundError, checkResponseStatusCode } from './errors.js';
 export * as HttpStatus from './httpStatus.js';
 export { createConsoleLogger, parseLoggingLevel, silentLogger } from './logger.js';

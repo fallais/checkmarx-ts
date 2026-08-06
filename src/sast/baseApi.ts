@@ -1,13 +1,13 @@
-import { ApiClient } from '../core/apiClient.js';
-import type { Configuration } from '../core/configuration.js';
-import { constructConfiguration } from './config.js';
+import { ApiClient, isApiClient } from '../core/apiClient.js';
+import type { SastApiInit } from './config.js';
+import { sastConfiguration } from './config.js';
 
 export abstract class SastApiBase {
   readonly apiClient: ApiClient;
   readonly baseUrl: string;
 
-  constructor(apiClient?: ApiClient, configuration?: Partial<Configuration>) {
-    this.apiClient = apiClient ?? new ApiClient(constructConfiguration(configuration));
+  constructor(init: SastApiInit) {
+    this.apiClient = isApiClient(init) ? init : new ApiClient(sastConfiguration(init));
     this.baseUrl = (this.apiClient.configuration.serverBaseUrl ?? '').replace(/\/+$/, '');
   }
 }

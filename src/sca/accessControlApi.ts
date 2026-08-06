@@ -1,11 +1,11 @@
 import { AccessControl } from '../accessControl/accessControl.js';
-import { ApiClient } from '../core/apiClient.js';
-import type { Configuration } from '../core/configuration.js';
-import { constructConfiguration } from './config.js';
+import { ApiClient, isApiClient } from '../core/apiClient.js';
+import type { ScaApiInit } from './config.js';
+import { scaConfiguration } from './config.js';
 
 export class AccessControlApi extends AccessControl {
-  constructor(apiClient?: ApiClient, configuration?: Partial<Configuration>) {
-    const client = apiClient ?? new ApiClient(constructConfiguration(configuration));
+  constructor(init: ScaApiInit) {
+    const client = isApiClient(init) ? init : new ApiClient(scaConfiguration(init));
     super(client, (client.configuration.iamBaseUrl ?? '').replace(/\/+$/, ''));
   }
 }
