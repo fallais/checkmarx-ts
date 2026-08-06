@@ -1,0 +1,80 @@
+{
+  "name": "checkmarx-ts",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for the Checkmarx SAST and SCA REST APIs — a faithful port of CheckmarxPythonSDK",
+  "keywords": [
+    "checkmarx",
+    "cxsast",
+    "cxsca",
+    "sast",
+    "sca",
+    "security",
+    "appsec",
+    "sdk"
+  ],
+  "homepage": "https://github.com/fallais/checkmarx-ts#readme",
+  "bugs": {
+    "url": "https://github.com/fallais/checkmarx-ts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fallais/checkmarx-ts.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "fallais",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./sast": {
+      "types": "./dist/sast/index.d.ts",
+      "import": "./dist/sast/index.js",
+      "require": "./dist/sast/index.cjs"
+    },
+    "./sca": {
+      "types": "./dist/sca/index.d.ts",
+      "import": "./dist/sca/index.js",
+      "require": "./dist/sca/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "undici": "^7.16.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@types/node": "^24.10.1",
+    "eslint": "^9.39.0",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
