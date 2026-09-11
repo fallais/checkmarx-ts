@@ -21,6 +21,7 @@ export type {
   CxSystemVersion,
   ResultAuditUpdateType,
 } from './generalApi.js';
+export * as odata from './odata/index.js';
 export { OsaApi } from './osaApi.js';
 export type { OsaVulnerabilityFilters } from './osaApi.js';
 export { GIT_AUTHENTICATION_MODES, ProjectsApi } from './projectsApi.js';

@@ -53,6 +53,37 @@ const scanId = await sca.getLatestScanIdOfAProject(project.id);
 const vulnerabilities = await sca.getVulnerabilitiesOfAScan(scanId!);
 ```
 
+## SAST OData
+
+CxSAST 9.x also exposes an OData endpoint, reachable under `odata`. Queries are typed and the
+helpers follow `@odata.nextLink` paging.
+
+```ts
+import { odata } from 'checkmarx-ts/sast';
+
+const scans = new odata.ScansOdataApi(config);
+const lastScanId = await scans.getLastFullScanId(projectId);
+const loc = await scans.getScanLoc(lastScanId!);
+
+const results = new odata.ResultsOdataApi(config);
+const rows = await results.getResultsWithQueryLanguageState(lastScanId!, true);
+```
+
+`ProjectsOdataApi`, `ScansOdataApi` and `ResultsOdataApi` wrap the documented queries; they all
+extend `OdataApi`, so anything they miss can be queried directly:
+
+```ts
+const api = new odata.OdataApi(config);
+
+const noisy = await api.queryAll<odata.CxOdataScan>('Scans', {
+  select: ['Id', 'ProjectName', 'High'],
+  filter: `High gt 100 and ScanRequestedOn gt ${odata.odataDate(since)}`,
+  orderby: 'High desc',
+});
+```
+
+Property names are PascalCase, as OData returns them — `$select` and `$filter` match on those.
+
 Everything is also reachable from the root entry point:
 
 ```ts

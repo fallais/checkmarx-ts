@@ -1,12 +1,13 @@
 {
   "name": "checkmarx-ts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript SDK for the Checkmarx SAST and SCA REST APIs",
   "keywords": [
     "checkmarx",
     "cxsast",
     "cxsca",
     "sast",
+    "odata",
     "sca",
     "security",
     "appsec",
