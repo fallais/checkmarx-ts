@@ -1,17 +1,19 @@
 import { ApiClient, isApiClient } from '../../core/apiClient.js';
 import type { CxResponse } from '../../core/response.js';
 import { OK } from '../../core/httpStatus.js';
-import { VERSION } from '../../core/version.js';
 import { SastApiBase } from '../baseApi.js';
 import type { SastApiInit } from '../config.js';
 import { sastOdataConfiguration } from './config.js';
 import { buildOdataQuery, type OdataQuery } from './query.js';
 import type { CxOdataResponse } from './types.js';
 
-/** OData wants plain JSON, not the versioned REST media type of `getHeaders`. */
+/**
+ * OData wants plain JSON, not the versioned REST media type of `getHeaders`.
+ * No `cxOrigin`: it tags the origin of a scan and means nothing to a read-only
+ * endpoint, which leaves `User-Agent` to identify the client.
+ */
 export function getOdataHeaders(extraHeader?: Record<string, string>): Record<string, string> {
   return {
-    cxOrigin: `checkmarx-ts ${VERSION}`,
     Accept: 'application/json',
     ...extraHeader,
   };
