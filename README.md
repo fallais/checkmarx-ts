@@ -58,6 +58,10 @@ const vulnerabilities = await sca.getVulnerabilitiesOfAScan(scanId!);
 CxSAST 9.x also exposes an OData endpoint, reachable under `odata`. Queries are typed and the
 helpers follow `@odata.nextLink` paging.
 
+OData sits behind its own scope (`access_control_api sast_api`, client `resource_owner_sast_client`),
+so these classes build their token from it. Pass them a config object, not an `ApiClient` shared
+with the REST classes — a REST token is rejected by the OData endpoint.
+
 ```ts
 import { odata } from 'checkmarx-ts/sast';
 

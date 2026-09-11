@@ -1,7 +1,10 @@
+import { ApiClient, isApiClient } from '../../core/apiClient.js';
 import type { CxResponse } from '../../core/response.js';
 import { OK } from '../../core/httpStatus.js';
 import { VERSION } from '../../core/version.js';
 import { SastApiBase } from '../baseApi.js';
+import type { SastApiInit } from '../config.js';
+import { sastOdataConfiguration } from './config.js';
 import { buildOdataQuery, type OdataQuery } from './query.js';
 import type { CxOdataResponse } from './types.js';
 
@@ -15,11 +18,20 @@ export function getOdataHeaders(extraHeader?: Record<string, string>): Record<st
 }
 
 /**
- * The CxSAST OData v1 endpoint (9.x on premise). Served by the web interface,
- * not `/cxrestapi`, on the same token. The entity classes extend this one, so
- * these helpers cover whatever they do not wrap.
+ * The CxSAST OData v1 endpoint (9.x on premise), served by the web interface
+ * rather than `/cxrestapi`. The entity classes extend this one, so these
+ * helpers cover whatever they do not wrap.
  */
 export class OdataApi extends SastApiBase {
+  /**
+   * A config object is built with the OData scope and client id rather than the
+   * REST pair. An `ApiClient` is used as given, so one shared with the REST
+   * classes carries a token the OData endpoint rejects.
+   */
+  constructor(init: SastApiInit) {
+    super(isApiClient(init) ? init : new ApiClient(sastOdataConfiguration(init)));
+  }
+
   get odataUrl(): string {
     return `${this.baseUrl}/Cxwebinterface/odata/v1`;
   }

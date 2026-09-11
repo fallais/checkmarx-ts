@@ -1,3 +1,9 @@
+export {
+  ODATA_CLIENT_ID,
+  ODATA_SCOPE,
+  sastOdataConfiguration,
+  sastOdataConfigurationFromEnv,
+} from './config.js';
 export { getOdataHeaders, OdataApi } from './odataApi.js';
 export { ProjectsOdataApi } from './projectsApi.js';
 export {
