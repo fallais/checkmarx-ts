@@ -45,6 +45,10 @@ export class ResultsOdataApi extends OdataApi {
   /**
    * One flat row per result with query, language, state and scan origin.
    * `ScanId` must stay in `$select` or the endpoint fails to deserialise.
+   *
+   * `filterFalsePositive` restricts the rows to the not-exploitable and
+   * proposed-not-exploitable states rather than excluding them, matching the
+   * Python SDK's `filter_false_positive`.
    */
   async getResultsWithQueryLanguageState(
     scanId: number,

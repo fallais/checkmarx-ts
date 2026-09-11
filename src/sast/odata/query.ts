@@ -37,9 +37,13 @@ export function encodeOdataValue(value: string): string {
   return value.replace(UNSAFE, (char) => UNSAFE_REPLACEMENTS[char] ?? char);
 }
 
-/** Quotes a `$filter` string literal, doubling embedded quotes. */
+/**
+ * Quotes a `$filter` string literal, doubling embedded quotes. `%` is escaped
+ * here rather than in `encodeOdataValue`, which leaves it alone so that raw
+ * filter expressions can carry pre-encoded fragments.
+ */
 export function odataString(value: string): string {
-  return `'${value.replace(/'/g, "''")}'`;
+  return `'${value.replace(/%/g, '%25').replace(/'/g, "''")}'`;
 }
 
 /** OData v4 datetimes are unquoted. */

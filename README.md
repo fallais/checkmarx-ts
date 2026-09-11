@@ -70,7 +70,7 @@ const lastScanId = await scans.getLastFullScanId(projectId);
 const loc = await scans.getScanLoc(lastScanId!);
 
 const results = new odata.ResultsOdataApi(config);
-const rows = await results.getResultsWithQueryLanguageState(lastScanId!, true);
+const rows = await results.getResultsWithQueryLanguageState(lastScanId!);
 ```
 
 `ProjectsOdataApi`, `ScansOdataApi` and `ResultsOdataApi` wrap the documented queries; they all
