@@ -41,11 +41,15 @@ export class OdataApi extends SastApiBase {
     return `${this.odataUrl}/${suffix}${buildOdataQuery(query)}`;
   }
 
-  async request(path: string, query?: OdataQuery): Promise<CxResponse> {
+  async request(
+    path: string,
+    query?: OdataQuery,
+    headers?: Record<string, string>,
+  ): Promise<CxResponse> {
     return this.apiClient.callApi({
       method: 'GET',
       url: this.odataUrlFor(path, query),
-      headers: getOdataHeaders(),
+      headers: getOdataHeaders(headers),
     });
   }
 
@@ -88,9 +92,14 @@ export class OdataApi extends SastApiBase {
     return items;
   }
 
-  /** `$count` answers with a bare number in plain text, sometimes BOM-prefixed. */
+  /**
+   * `$count` answers with a bare number in plain text, sometimes BOM-prefixed.
+   * It has no JSON representation, so asking only for JSON risks a 406.
+   */
   async count(path: string, query?: OdataQuery): Promise<number> {
-    const response = await this.request(`${path.replace(/\/+$/, '')}/$count`, query);
+    const response = await this.request(`${path.replace(/\/+$/, '')}/$count`, query, {
+      Accept: 'text/plain, */*;q=0.8',
+    });
     if (response.statusCode !== OK) return 0;
     const parsed = Number(response.text.replace(/^\uFEFF/, '').trim());
     return Number.isFinite(parsed) ? parsed : 0;
